@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuestros Momentos Juntos ❤️</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-snap-type: y mandatory;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+            background-color: #000;
+        }
+
+        /* Estilos Generales de Sección */
+        section {
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            position: relative;
+            scroll-snap-align: start;
+            overflow: hidden;
+        }
+
+        .content-wrapper {
+            max-width: 1200px;
+            width: 100%;
+            z-index: 2;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+            transform: translateY(50px);
+            opacity: 0;
+            transition: all 1s ease;
+        }
+
+        section.active .content-wrapper {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        h2 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        p.description {
+            font-size: 1.2em;
+            line-height: 1.6;
+            text-align: center;
+            margin-bottom: 30px;
+            font-style: italic;
+            color: #444;
+        }
+
+        /* Hero Section */
+        #hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+        }
+
+        #hero .content-wrapper {
+            background: transparent;
+            box-shadow: none;
+            color: white;
+        }
+
+        #hero h1 {
+            font-size: 4em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+            font-size: 2em;
+            color: white;
+            cursor: pointer;
+        }
+
+        /* Agosto - Terror/Cine */
+        #agosto {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
+            background-size: cover;
+            background-position: center;
+            color: #333;
+        }
+        #agosto h2 { color: #2c3e50; }
+
+        /* Octubre - Jardín/Romance */
+        #octubre {
+            background: linear-gradient(rgba(255,255,255,0.4), rgba(255,255,255,0.4)), url('https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+        #octubre h2 { color: #d63384; }
+
+        /* Noviembre - Fiesta/Elegante */
+        #noviembre {
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1514525253440-b393452e3383?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+        #noviembre h2 { color: #c0392b; }
+
+        /* Diciembre - Mágico/Invierno */
+        #diciembre {
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1543589077-47d81606c1bf?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+        #diciembre h2 { color: #2980b9; }
+
+        /* Footer Section */
+        footer {
+            background: #1a1a1a;
+            color: white;
+            padding: 50px 20px;
+            text-align: center;
+            scroll-snap-align: start;
+            min-height: 50vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Grid de Imágenes */
+        .images-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .image-container {
+            position: relative;
+            aspect-ratio: 1;
+            border-radius: 15px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .image-container:hover {
+            transform: scale(1.03);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            z-index: 10;
+        }
+
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .image-container:hover img {
+            transform: scale(1.1);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            max-width: 90%;
+            max-height: 90%;
+            position: relative;
+        }
+
+        .modal-content img {
+            max-width: 100%;
+            max-height: 90vh;
+            border-radius: 5px;
+            box-shadow: 0 0 50px rgba(255, 255, 255, 0.1);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            color: white;
+            font-size: 40px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .close-modal:hover {
+            transform: rotate(90deg);
+        }
+
+        .nav-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            font-size: 50px;
+            cursor: pointer;
+            padding: 20px;
+            transition: transform 0.3s ease;
+            background: rgba(0,0,0,0.3);
+            border-radius: 50%;
+        }
+
+        .nav-arrow:hover {
+            transform: translateY(-50%) scale(1.1);
+            background: rgba(0,0,0,0.6);
+        }
+
+        .nav-arrow.left { left: 20px; }
+        .nav-arrow.right { right: 20px; }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-20px); }
+            60% { transform: translateX(-50%) translateY(-10px); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h2 { font-size: 2em; }
+            #hero h1 { font-size: 2.5em; }
+            .content-wrapper { padding: 20px; }
+            .images-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Hero Section -->
+    <section id="hero" class="active">
+        <div class="content-wrapper">
+            <h1>✨ El camino que hemos construido juntos este 2025 ✨</h1>
+            <p style="font-size: 2.5em; margin-top: 15px; font-weight: 600; letter-spacing: 2px;">Anye y Sebas</p>
+            <p style="margin-top: 20px; font-size: 1.2em; opacity: 0.9;">Desliza para revivir nuestra historia</p>
+        </div>
+        <div class="scroll-indicator">⬇️</div>
+    </section>
+
+    <!-- Agosto -->
+    <section id="agosto">
+        <div class="content-wrapper">
+            <h2>🎬 Agosto</h2>
+            <p class="description">
+                "El comienzo de algo especial... Conociéndonos entre sustos y risas mientras veíamos películas de terror. Cada reacción era una excusa perfecta para acercarnos un poco más."
+            </p>
+            <div class="images-grid">
+                <div class="image-container" data-src="Imágenes/Agosto 1.jpeg">
+                    <img src="Imágenes/Agosto 1.jpeg" alt="Agosto 1" loading="lazy">
+                </div>
+                <div class="image-container" data-src="Imágenes/Agosto 2.jpeg">
+                    <img src="Imágenes/Agosto 2.jpeg" alt="Agosto 2" loading="lazy">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Octubre -->
+    <section id="octubre">
+        <div class="content-wrapper">
+            <h2>🌺 Octubre</h2>
+            <p class="description">
+                "Entre las flores del Jardín Botánico, el aire se llenaba de expectación... ¿Quién daría el primer paso? Parecíamos bobis... La tensión era palpable, los corazones latían fuerte, todo se sentía tan bien"
+            </p>
+            <div class="images-grid">
+                <div class="image-container" data-src="Imágenes/Octubre.jpeg">
+                    <img src="Imágenes/Octubre.jpeg" alt="Octubre" loading="lazy">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Noviembre -->
+    <section id="noviembre">
+        <div class="content-wrapper">
+            <h2>💃 Noviembre</h2>
+            <p class="description">
+                "Una noche en el club que lo cambió todo... Compartiendo con la familia, fortaleciendo lazos que se vuelven eternos. Y en medio de la pista, ese baile romántico donde el mundo desapareció y solo quedamos tú y yo."
+            </p>
+            <div class="images-grid">
+                <div class="image-container" data-src="Imágenes/Noviembre.jpeg">
+                    <img src="Imágenes/Noviembre.jpeg" alt="Noviembre" loading="lazy">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Diciembre -->
+    <section id="diciembre">
+        <div class="content-wrapper">
+            <h2>🎭 Diciembre</h2>
+            <p class="description">
+                "El mes mágico que cierra este capítulo perfecto... Momentos en familia creando recuerdos inolvidables, aventuras que nos llenaron de adrenalina, y las luces del teatro iluminando nuestras sonrisas."
+            </p>
+            <div class="images-grid">
+                <div class="image-container" data-src="Imágenes/Diciembre 1.jpeg">
+                    <img src="Imágenes/Diciembre 1.jpeg" alt="Diciembre 1" loading="lazy">
+                </div>
+                <div class="image-container" data-src="Imágenes/Diciembre 2.jpeg">
+                    <img src="Imágenes/Diciembre 2.jpeg" alt="Diciembre 2" loading="lazy">
+                </div>
+                <div class="image-container" data-src="Imágenes/Diciembre 3.jpeg">
+                    <img src="Imágenes/Diciembre 3.jpeg" alt="Diciembre 3" loading="lazy">
+                </div>
+                <div class="image-container" data-src="Imágenes/Diciembre 4.jpeg">
+                    <img src="Imágenes/Diciembre 4.jpeg" alt="Diciembre 4" loading="lazy">
+                </div>
+                <div class="image-container" data-src="Imágenes/Diciembre 5.jpeg">
+                    <img src="Imágenes/Diciembre 5.jpeg" alt="Diciembre 5" loading="lazy">
+                </div>
+                <div class="image-container" data-src="Imágenes/Diciembre 6.jpeg">
+                    <img src="Imágenes/Diciembre 6.jpeg" alt="Diciembre 6" loading="lazy">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div style="font-size: 2em; margin-bottom: 20px;">💕</div>
+        <h2 style="font-size: 2.5em; margin-bottom: 15px;">Por mas momentos juntos mi webish</h2>
+        <p style="font-size: 1.2em; opacity: 0.8;">Este es solo el comienzo de nuestra historia...</p>
+        <p style="margin-top: 30px; font-size: 0.9em; opacity: 0.6;">Hecho con amor para la más linda - Anye</p>
+    </footer>
+
+    <!-- Modal -->
+    <div class="modal" id="imageModal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <span class="nav-arrow left">&#8249;</span>
+            <img id="modalImage" src="" alt="Imagen ampliada">
+            <span class="nav-arrow right">&#8250;</span>
+        </div>
+    </div>
+
+    <script>
+        // Intersection Observer para animaciones al hacer scroll
+        const observerOptions = {
+            threshold: 0.3
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // Modal Logic
+        const modal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+        const closeModal = document.querySelector('.close-modal');
+        const imageContainers = document.querySelectorAll('.image-container');
+        const navLeft = document.querySelector('.nav-arrow.left');
+        const navRight = document.querySelector('.nav-arrow.right');
+        
+        let allImages = [];
+        let currentImageIndex = 0;
+
+        // Recopilar todas las imágenes en orden
+        imageContainers.forEach((container) => {
+            allImages.push(container.dataset.src);
+            
+            container.addEventListener('click', () => {
+                const src = container.dataset.src;
+                currentImageIndex = allImages.indexOf(src);
+                openModal(src);
+            });
+        });
+
+        function openModal(src) {
+            modalImage.src = src;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModalFunc() {
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        closeModal.addEventListener('click', closeModalFunc);
+        
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModalFunc();
+            }
+        });
+
+        // Navegación
+        function showImage(index) {
+            currentImageIndex = (index + allImages.length) % allImages.length;
+            modalImage.src = allImages[currentImageIndex];
+        }
+
+        navLeft.addEventListener('click', (e) => {
+            e.stopPropagation();
+            showImage(currentImageIndex - 1);
+        });
+
+        navRight.addEventListener('click', (e) => {
+            e.stopPropagation();
+            showImage(currentImageIndex + 1);
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (!modal.classList.contains('active')) return;
+            if (e.key === 'Escape') closeModalFunc();
+            if (e.key === 'ArrowLeft') showImage(currentImageIndex - 1);
+            if (e.key === 'ArrowRight') showImage(currentImageIndex + 1);
+        });
+    </script>
+</body>
+</html>
